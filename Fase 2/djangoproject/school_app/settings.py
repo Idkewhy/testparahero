@@ -234,3 +234,4 @@ else:
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Site Default values
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "school_app.settings")
