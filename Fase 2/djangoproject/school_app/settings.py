@@ -191,6 +191,8 @@ CKEDITOR_RESTRICT_BY_USER = False
 
 
 # Configuración de LOGGING
+import os
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -199,38 +201,34 @@ LOGGING = {
             'format': '{levelname} {asctime} {module} {message}',
             'style': '{',
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',  # Enviar logs a la consola
+            'class': 'logging.StreamHandler',  # Logs a la consola
             'formatter': 'verbose',
         },
     },
     'root': {
-        'handlers': ['console'],  # Por defecto, enviar logs a la consola
-        'level': 'WARNING',
-    },
-    'django': {
-        'handlers': ['console'],  # Logs de Django también se envían a la consola
-        'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),  # Nivel de logs configurado por variable de entorno
-        'propagate': False,
+        'handlers': ['console'],  # Solo consola
+        'level': 'INFO',  # Cambiar según el nivel que desees
     },
 }
 
-# Configuración adicional para entornos locales
-if not os.getenv('VERCEL', False):  # Si NO estamos en Vercel
+# Detecta si estás en Vercel
+if os.getenv('VERCEL', False):
+    # En Vercel, deshabilita el uso de cualquier FileHandler
+    LOGGING['handlers'].pop('file', None)
+else:
+    # Para local o desarrollo, agrega logs en archivo
     LOGGING['handlers']['file'] = {
         'level': 'DEBUG',
         'class': 'logging.FileHandler',
-        'filename': os.path.join(BASE_DIR, 'debug.log'),  # Ruta al archivo de logs en local
+        'filename': os.path.join(BASE_DIR, 'debug.log'),
         'formatter': 'verbose',
     }
-    LOGGING['root']['handlers'].append('file')  # Agregar el handler de archivo a los logs raíz
+    LOGGING['root']['handlers'].append('file')
+
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
