@@ -188,35 +188,50 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CKEDITOR_RESTRICT_BY_USER = False
 
+
+
+# Configuración de LOGGING
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {message}",
-            "style": "{",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
-    "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.handlers.TimedRotatingFileHandler",
-            "when": "W6",
-            "interval": 4,
-            "backupCount": 3,
-            "encoding": "utf8",
-            "filename": os.path.join(BASE_DIR, "debug.log"),
-            "formatter": "verbose",
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',  # Enviar logs a la consola
+            'formatter': 'verbose',
         },
     },
-    "loggers": {
-        "django": {
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": True,
-        },
+    'root': {
+        'handlers': ['console'],  # Por defecto, enviar logs a la consola
+        'level': 'WARNING',
+    },
+    'django': {
+        'handlers': ['console'],  # Logs de Django también se envían a la consola
+        'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),  # Nivel de logs configurado por variable de entorno
+        'propagate': False,
     },
 }
+
+# Configuración adicional para entornos locales
+if not os.getenv('VERCEL', False):  # Si NO estamos en Vercel
+    LOGGING['handlers']['file'] = {
+        'level': 'DEBUG',
+        'class': 'logging.FileHandler',
+        'filename': os.path.join(BASE_DIR, 'debug.log'),  # Ruta al archivo de logs en local
+        'formatter': 'verbose',
+    }
+    LOGGING['root']['handlers'].append('file')  # Agregar el handler de archivo a los logs raíz
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
