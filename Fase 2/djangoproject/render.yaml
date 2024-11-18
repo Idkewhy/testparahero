@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: school_app
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn djangoproject.wsgi:application
+    plan: free
