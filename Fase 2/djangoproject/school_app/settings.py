@@ -65,6 +65,8 @@ MIDDLEWARE = [
     "apps.teachers.middleware.TeacherID",
     "apps.students.middleware.StudentID",
     "apps.representatives.middleware.RepresentativesID",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware", # Here
 ]
 
 ROOT_URLCONF = "school_app.urls"
@@ -157,11 +159,11 @@ CKEDITOR_CONFIGS = {
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -216,19 +218,6 @@ LOGGING = {
     },
 }
 
-# Detecta si estás en Vercel
-if os.getenv('VERCEL', False):
-    # En Vercel, deshabilita el uso de cualquier FileHandler
-    LOGGING['handlers'].pop('file', None)
-else:
-    # Para local o desarrollo, agrega logs en archivo
-    LOGGING['handlers']['file'] = {
-        'level': 'DEBUG',
-        'class': 'logging.FileHandler',
-        'filename': os.path.join(BASE_DIR, 'debug.log'),
-        'formatter': 'verbose',
-    }
-    LOGGING['root']['handlers'].append('file')
 
 
 
